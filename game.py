@@ -1,39 +1,32 @@
-import pygame, math, random, sys, asyncio
-from scripts.config import config
 from utils.elements import ElementSingleton
-from scripts.world import World
+from scripts.window import Window
+from scripts.assets import Assets
 from scripts.input import Input
-from scripts.pokeapi import Pokebase
+from scripts.renderer import Renderer
+from scripts.world import World
+from scripts.audio import Audio
 
 class Game(ElementSingleton):
     def __init__(self):
         super().__init__()
-
-        # pygame initialization ------------------------------------------- #
-        pygame.init()
-
-        self.display = pygame.display.set_mode(config['window']['resolution'])
-        pygame.display.set_caption(config['window']['title'])
-
-        self.clock = pygame.time.Clock()
         
         # initializing singletons ----------------------------------------- #
-        self.world = World()
+        self.window = Window()
+        self.assets = Assets()
         self.input = Input()
-        self.pb = Pokebase()
+        self.renderer = Renderer()
+        self.world = World()
+        self.audio = Audio()
 
     def update(self):
         self.input.update()
-
-        if self.input.mouse_state['left_click']:
-            pokemon = asyncio.run(self.pb.get_pokemon())
-            print(pokemon)
+        self.window.update()
+        self.world.update()
+        self.renderer.update()
 
     def run(self):
         while True:
             self.update()
-            pygame.display.flip()
-            self.clock.tick(config['window']['fps'])
 
 if __name__ == '__main__':
     game = Game()

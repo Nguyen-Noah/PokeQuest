@@ -18,5 +18,10 @@
         "toggle": "hold",
         "button": ["keyboard", [115]],
         "mode": ["core"]
+    },
+    "fullscreen": {
+        "toggle": "press",
+        "button": ["keyboard", [1073741892]],
+        "mode": ["core"]
     }
 }

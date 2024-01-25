@@ -1,9 +1,11 @@
 import pygame, sys
 from pygame.locals import *
+from utils.elements import ElementSingleton
 from .config import config
 
-class Input:
+class Input(ElementSingleton):
     def __init__(self):
+        super().__init__()
         #pygame.event.set_grab(True)
 
         self.states = {}

@@ -1,5 +1,7 @@
 {
-    "resolution": [1080, 720],
+    "scaled_resolution": [768, 576],
+    "base_resolution": [256, 192],
+    "scale_ratio": 3,
     "title": "PokeQuest Adventure",
     "fps": 60
 }
