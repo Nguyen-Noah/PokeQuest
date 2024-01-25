@@ -1,20 +1,23 @@
 import pygame
 from utils.elements import ElementSingleton
 from .entities import Entities
+from .lottery import Lottery
 from utils.core_funcs import center_img_x
 
 class World(ElementSingleton):
     def __init__(self):
         super().__init__()
+        self.load()
 
     def load(self):
         self.entities = Entities()
         self.player = self.entities.gen_player()
+        self.lottery = Lottery()
 
     def update(self):
-        
         if self.e['Input'].mouse_state['left_click']:
             self.player.add_pokemon('lugia')
+            print(self.player.pokedex.owned_pokemon)
 
     def render(self, surf):
         assets = self.e['Assets'].battle_assets['1']

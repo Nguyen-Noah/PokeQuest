@@ -6,4 +6,4 @@ class Renderer(ElementSingleton):
 
     def update(self):
         surf = self.e['Window'].display
-        self.e['World'].render(surf)
+        #self.e['World'].render(surf)
