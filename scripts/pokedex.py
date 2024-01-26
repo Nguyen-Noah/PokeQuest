@@ -19,3 +19,6 @@ class Pokedex(Element):
                 self.active_pokemon.append(new_pkm)
         else:
             print('pokemon already owned')
+
+    def __str__(self):
+        return ' '.join(pokemon for pokemon in self.owned_pokemon)

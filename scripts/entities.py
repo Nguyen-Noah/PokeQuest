@@ -8,7 +8,7 @@ class Entities(ElementSingleton):
         self.entities = []
 
     def gen_player(self):
-        self.entities.append(Player())
+        self.entities.append(Player((0, 0)))
         return self.entities[-1]
 
     def update(self):

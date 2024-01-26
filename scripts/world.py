@@ -16,8 +16,8 @@ class World(ElementSingleton):
 
     def update(self):
         if self.e['Input'].mouse_state['left_click']:
-            self.player.add_pokemon('lugia')
-            print(self.player.pokedex.owned_pokemon)
+            self.lottery.pull()
+            #print(self.player.pokedex)
 
     def render(self, surf):
         assets = self.e['Assets'].battle_assets['1']
