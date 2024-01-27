@@ -10,6 +10,9 @@ class Pokedex(Element):
         self.owned_pokemon = {}
         self.active_pokemon = []
 
+    def __str__(self):
+        return ' '.join(pokemon for pokemon in self.owned_pokemon)
+    
     def add(self, pokemon):
         if pokemon not in self.owned_pokemon:
             new_pkm = Pokemon(pokemon)
@@ -20,5 +23,6 @@ class Pokedex(Element):
         else:
             print('pokemon already owned')
 
-    def __str__(self):
-        return ' '.join(pokemon for pokemon in self.owned_pokemon)
+    def update(self):
+        for pokemon in self.active_pokemon:
+            pokemon.update()

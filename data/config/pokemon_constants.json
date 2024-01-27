@@ -1,4 +1,26 @@
 {
     "max_moves": 4,
-    "exp_scale_per_level": 30
+    "exp_scale_per_level": 30,
+    "natures": {
+        "lonely": ["attack", "defense"],
+        "brave": ["attack", "speed"],
+        "adamant": ["attack", "special_attack"],
+        "naughty": ["attack", "special_defense"],
+        "bold": ["defense", "attack"],
+        "relaxed": ["defense", "attack"],
+        "impish": ["defense", "special_attack"],
+        "lax": ["defense", "special_defense"],
+        "timid": ["speed", "attack"],
+        "hasty": ["speed", "defense"],
+        "jolly": ["speed", "special_attack"],
+        "naive": ["speed", "special_defense"],
+        "modest": ["special_attack", "attack"],
+        "mild": ["special_attack", "defense"],
+        "quiet": ["special_attack", "speed"],
+        "rash": ["special_attack", "special_defense"],
+        "calm": ["special_defense", "attack"],
+        "gentle": ["special_defense", "defense"],
+        "sassy": ["special_defense", "speed"],
+        "careful": ["special_defense", "special_attack"]
+    }
 }

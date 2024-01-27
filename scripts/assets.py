@@ -12,6 +12,7 @@ class Assets(ElementSingleton):
         self.pokemon = self.load_pokemon('data/pokemon')
         self.text_boxes = self.load_dir('data/graphics/text_boxes', colorkey=(0, 0, 0))
         self.health_bars = self.load_dir('data/graphics/health_bars', colorkey=(0, 19, 127))
+        self.player = self.load_dir('data/graphics/player', colorkey=(147, 187, 236))
 
     def load_pokemon(self, path):
         pokemon_list = {}

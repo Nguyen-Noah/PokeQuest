@@ -12,7 +12,7 @@ class Entity(Element):
         self.pokedex.add(pokemon)
 
     def update(self):
-        pass
+        self.pokedex.update()
 
     def render(self, surf):
         pass

@@ -2,6 +2,7 @@ import pygame
 from utils.elements import ElementSingleton
 from .entities import Entities
 from .lottery import Lottery
+from .arena import Arena
 from utils.core_funcs import center_img_x
 
 class World(ElementSingleton):
@@ -9,18 +10,27 @@ class World(ElementSingleton):
         super().__init__()
         self.load()
 
+        self.fighting = False
+        self.arena_created = False
+
     def load(self):
         self.entities = Entities()
         self.player = self.entities.gen_player()
         self.lottery = Lottery()
 
     def update(self):
+        if self.arena_created:
+            self.arena.update()
+
         if self.e['Input'].mouse_state['left_click']:
-            self.lottery.pull()
-            #print(self.player.pokedex)
+            self.arena = Arena()
+            self.arena_created = True
+            #self.lottery.pull()
 
     def render(self, surf):
-        assets = self.e['Assets'].battle_assets['1']
+        if self.arena_created:
+            self.arena.render(surf)
+        """ assets = self.e['Assets'].battle_assets['1']
         pokemon = self.e['Assets'].pokemon['dragonite']['back_default']
         enemy = self.e['Assets'].pokemon['snorlax']['front_default']
         text_box = self.e['Assets'].text_boxes['hg']
@@ -37,4 +47,4 @@ class World(ElementSingleton):
         surf.blit(pokemon, player_pos)
 
         pygame.draw.rect(surf, (0, 0, 0), (0, assets['bg'].get_height(), assets['bg'].get_width(), surf.get_height() - assets['bg'].get_height()))
-        surf.blit(text_box, (center_img_x(surf, text_box), self.e['Window'].display.get_height() - text_box.get_height()))
+        surf.blit(text_box, (center_img_x(surf, text_box), self.e['Window'].display.get_height() - text_box.get_height())) """
