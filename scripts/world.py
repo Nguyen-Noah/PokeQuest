@@ -21,10 +21,12 @@ class World(ElementSingleton):
     def update(self):
         if self.arena_created:
             self.arena.update()
+        else:
+            self.arena = Arena('lyra')
+            self.arena_created = True            
 
         if self.e['Input'].mouse_state['left_click']:
-            self.arena = Arena()
-            self.arena_created = True
+            pass
             #self.lottery.pull()
 
     def render(self, surf):

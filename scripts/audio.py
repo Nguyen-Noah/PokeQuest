@@ -20,7 +20,7 @@ class Audio(ElementSingleton):
     def change_volume(self, sound, vol):
         self.sounds[sound].set_volume(vol)
 
-    def add(self, sound, volume):
+    def load(self, sound, volume):
         if not sound in self.sounds:
             py_sound = pygame.mixer.Sound(AUDIO_PATH + sound)
             py_sound.set_volume(volume)
