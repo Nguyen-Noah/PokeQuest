@@ -5,11 +5,16 @@ from .move import Move
 from .config import config
 
 class Pokemon(Element):
-    def __init__(self, name):
+    def __init__(self, name, owner):
         super().__init__()
         self.name = name
+        self.owner = owner
         self.config = load_config(self.name)
         self.load()
+        if self.owner.type == 'player':
+            self.healthbar_transition = self.e['Assets'].health_bars[self.owner.type + '_main'].get_width()
+        else:
+            self.healthbar_transition = -self.e['Assets'].health_bars[self.owner.type + '_main'].get_width()
 
     def load(self):
         # female/shiny -------- #
@@ -98,5 +103,21 @@ class Pokemon(Element):
     def gain_exp(self, amt):
         self.exp += amt
 
+    def render_health(self, surf):
+        if self.owner.type == 'player':
+            render_pos = (surf.get_width() - self.e['Assets'].health_bars[self.owner.type + '_main'].get_width(), 280)
+            if self.healthbar_transition > 0:
+                self.healthbar_transition -= min(12, self.healthbar_transition)
+        else:
+            render_pos = (0, 50)
+            if self.healthbar_transition <= 0:
+                self.healthbar_transition += min(12, abs(self.healthbar_transition))
+
+        surf.blit(self.e['Assets'].health_bars[self.owner.type + '_main'], (render_pos[0] + self.healthbar_transition, render_pos[1]))
+
     def update(self):
         self.reset_stats()
+
+    def render(self, surf, pos, direction='back'):
+        surf.blit(self.assets[direction], (pos[0], pos[1] + 40))
+        self.render_health(surf)

@@ -23,3 +23,4 @@ class Window(ElementSingleton):
         #self.screen.blit(pygame.transform.scale(self.display, self.scaled_resolution), (0, 0))
         pygame.display.flip()
         self.clock.tick(config['window']['fps'])
+        self.display.fill((0, 0, 0))
