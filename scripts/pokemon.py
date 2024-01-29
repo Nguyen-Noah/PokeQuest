@@ -15,6 +15,7 @@ class Pokemon(Element):
             self.healthbar_transition = self.e['Assets'].health_bars[self.owner.type + '_main'].get_width()
         else:
             self.healthbar_transition = -self.e['Assets'].health_bars[self.owner.type + '_main'].get_width()
+        self.text = pygame.font.Font('data/fonts/pokemon-ds-font.ttf', 45)
 
     def load(self):
         # female/shiny -------- #
@@ -105,15 +106,25 @@ class Pokemon(Element):
 
     def render_health(self, surf):
         if self.owner.type == 'player':
+            name_offset = (60, 25)
             render_pos = (surf.get_width() - self.e['Assets'].health_bars[self.owner.type + '_main'].get_width(), 280)
             if self.healthbar_transition > 0:
                 self.healthbar_transition -= min(12, self.healthbar_transition)
         else:
+            name_offset = (10, 25)
             render_pos = (0, 50)
             if self.healthbar_transition <= 0:
                 self.healthbar_transition += min(12, abs(self.healthbar_transition))
 
-        surf.blit(self.e['Assets'].health_bars[self.owner.type + '_main'], (render_pos[0] + self.healthbar_transition, render_pos[1]))
+        render_pos = (render_pos[0] + self.healthbar_transition, render_pos[1])
+        surf.blit(self.e['Assets'].health_bars[self.owner.type + '_main'], render_pos)
+
+        text_surf = self.text.render(self.name.capitalize(), True, (80, 80, 80))
+        shadow_surf = self.text.render(self.name.capitalize(), True, (200, 200, 200))
+        surf.blit(shadow_surf, (render_pos[0] + name_offset[0] + 2, render_pos[1] + name_offset[1]))
+        surf.blit(shadow_surf, (render_pos[0] + name_offset[0] + 2, render_pos[1] + name_offset[1] + 2))
+        surf.blit(shadow_surf, (render_pos[0] + name_offset[0], render_pos[1] + name_offset[1] + 2))
+        surf.blit(text_surf, (render_pos[0] + name_offset[0], render_pos[1] + name_offset[1]))
 
     def update(self):
         self.reset_stats()

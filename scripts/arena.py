@@ -93,7 +93,11 @@ class Arena(ElementSingleton):
                 self.player_pokemon = self.e['World'].player.active_pokemon.name.upper()
                 self.render_text(surf, f'Go! {self.player_pokemon}!', 20)
 
-            elif self.state == 'choose_move':
+            elif self.state == 'choose_action':
                 self.render_text(surf, f'What will {self.player_pokemon} do?', 20)
                 self.current_textbox = self.e['Assets'].text_boxes['hg_moves']
                 surf.blit(self.e['Assets'].misc['fight'], (self.current_textbox.get_width(), self.assets['bg'].get_height()))
+
+                # change this to actually choosing fight, bag, pokemon
+                if self.e['Input'].mouse_state['left_click']:
+                    self.state = 'choose_move'

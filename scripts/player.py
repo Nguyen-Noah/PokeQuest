@@ -31,7 +31,7 @@ class Player(Trainer):
                     self.state_padding += 1
                     if self.state_padding >= 50:
                         self.e['Arena'].text_counter = 0
-                        self.e['Arena'].state = 'choose_move'
+                        self.e['Arena'].state = 'choose_action'
 
         print(self.active_pokemon.__repr__())
 
