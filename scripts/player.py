@@ -30,8 +30,8 @@ class Player(Trainer):
                 else:
                     self.state_padding += 1
                     if self.state_padding >= 50:
-                        self.e['Arena'].text_counter = 0
-                        self.e['Arena'].state = 'choose_action'
+                        self.e['Arena'].textbox.reset_text_counter()
+                        self.e['Arena'].set_state('choose_action')
 
         print(self.active_pokemon.__repr__())
 

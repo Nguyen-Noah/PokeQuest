@@ -19,8 +19,8 @@ class Rival(Trainer):
                 self.render_pokemon = True
                 self.player_deploy_timer -= 2
                 if self.player_deploy_timer <= 0:
-                    self.e['Arena'].state = 'deploying'
-                    self.e['Arena'].text_counter = 0
+                    self.e['Arena'].set_state('deploying')
+                    self.e['Arena'].textbox.reset_text_counter()
 
     def render(self, surf):
         render_pos = (self.e['Arena'].assets['bg'].get_width() - self.img.get_width() - 80, 10)

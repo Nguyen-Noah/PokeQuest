@@ -1,7 +1,7 @@
 import pygame, math
 from utils.elements import ElementSingleton
 from utils.core_funcs import center_img_x
-from .rival import Rival
+from .textbox import Textbox
 
 class Arena(ElementSingleton):
     def __init__(self, rival, terrain_id=1):
@@ -18,8 +18,7 @@ class Arena(ElementSingleton):
         self.e['Audio'].play('battle_theme')
 
         # font
-        self.text = pygame.font.Font('data/fonts/pokemon-ds-font.ttf', 40)
-        self.text_counter = 0
+        self.textbox = Textbox('hg')
 
         # timer for when the battle sequence starts
         self.transition = 160
@@ -35,15 +34,8 @@ class Arena(ElementSingleton):
         # misc
         self.pokeball_spin = 0          # degrees
 
-    def render_text(self, surf, text, newline):
-        text_surf = self.text.render(text[:math.floor(self.text_counter)], True, (80, 80, 80))
-        shadow_text = self.text.render(text[:math.floor(self.text_counter)], True, (200, 200, 200))
-        self.text_counter += 0.5
-        # render the text shadow and then the text
-        surf.blit(shadow_text, (38, 455))
-        surf.blit(shadow_text, (38, 457))
-        surf.blit(shadow_text, (36, 457))
-        surf.blit(text_surf, (36, 455))
+    def set_state(self, state):
+        self.state = state
 
     def update(self):
         self.e['World'].player.update()
@@ -57,8 +49,15 @@ class Arena(ElementSingleton):
                 if self.plat_offset <= 0:
                     self.state = 'prebattle'
 
-        if self.state == 'deploying':
-            self.pokeball_spin += 10
+        # START OF BATTLE LOOP
+        if self.state == 'prebattle':
+            self.click_timer -= 1
+            if self.e['Input'].mouse_state['left_click'] and self.click_timer <= 0:
+                self.state = 'rival_deploying'
+                self.textbox.reset_text_counter()
+        elif self.state == 'choose_action':
+            if self.e['Input'].mouse_state['left_click']:
+                self.state = 'choose_move'
 
     def render(self, surf):
         if self.transition <= 0:
@@ -72,32 +71,4 @@ class Arena(ElementSingleton):
             self.e['World'].player.render(surf)
 
             # text box
-            pygame.draw.rect(surf, (0, 0, 0), (0, self.assets['bg'].get_height(), self.assets['bg'].get_width(), surf.get_height() - self.assets['bg'].get_height()))
-            text_box_pos = (center_img_x(surf, self.e['Assets'].text_boxes['hg']), self.e['Window'].display.get_height() - self.e['Assets'].text_boxes['hg'].get_height() - 3)
-            surf.blit(self.current_textbox, text_box_pos)
-
-            # START OF THE BATTLE LOOP ------------------------------------ #
-            if self.state == 'prebattle':
-                # text
-                self.render_text(surf, f'You are challenged by trainer {self.rival.name.upper()}!', 20)
-                
-                self.click_timer -= 1
-                if self.e['Input'].mouse_state['left_click'] and self.click_timer <= 0:
-                    self.state = 'rival_deploying'
-                    self.text_counter = 0
-
-            elif self.state == 'rival_deploying':
-                self.render_text(surf, f'{self.rival.name.capitalize()} sent out {self.rival.active_pokemon.name.upper()}!', 20)
-
-            elif self.state == 'deploying':
-                self.player_pokemon = self.e['World'].player.active_pokemon.name.upper()
-                self.render_text(surf, f'Go! {self.player_pokemon}!', 20)
-
-            elif self.state == 'choose_action':
-                self.render_text(surf, f'What will {self.player_pokemon} do?', 20)
-                self.current_textbox = self.e['Assets'].text_boxes['hg_moves']
-                surf.blit(self.e['Assets'].misc['fight'], (self.current_textbox.get_width(), self.assets['bg'].get_height()))
-
-                # change this to actually choosing fight, bag, pokemon
-                if self.e['Input'].mouse_state['left_click']:
-                    self.state = 'choose_move'
+            self.textbox.render(surf)
