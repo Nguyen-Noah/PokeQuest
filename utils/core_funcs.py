@@ -26,3 +26,10 @@ def filter_asset(asset_list, female, shiny):
 
 def itr(l):
     return sorted(enumerate(l), reverse=True)
+
+def clip(surf, x, y, x_size, y_size):
+    handle_surf = surf.copy()
+    clipR = pygame.Rect(x, y, x_size, y_size)
+    handle_surf.set_clip(clipR)
+    image = surf.subsurface(handle_surf.get_clip())
+    return image.copy()

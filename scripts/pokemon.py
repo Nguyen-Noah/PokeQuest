@@ -6,6 +6,25 @@ from .healthbar import Healthbar
 from .config import config
 from .afflictions import affliction_map
 
+def slow(level):
+    return 5 * level ** 3 // 4
+
+def medium_slow(level):
+    return (6 * level ** 3 // 5) - (15 * level ** 2) + (100 * level) - 140
+
+def medium(level):
+    return level ** 3
+
+def fast(level):
+    return 4 * level ** 3 // 5
+
+exp_map = {
+    'slow': slow,
+    'medium-slow': medium_slow,
+    'medium': medium,
+    'fast': fast
+}
+
 class Pokemon(Element):
     def __init__(self, name, owner, custom_id=False, singleton=False, register=False):
         super().__init__(custom_id, singleton, register)
@@ -14,6 +33,7 @@ class Pokemon(Element):
         self.config = load_config(self.name)
         self.damage_taken = 0
         self.afflictions = []
+        self.alive = True
         self.load()
   
     def load(self):
@@ -24,6 +44,12 @@ class Pokemon(Element):
         # stats --------------- #
         self.level = 1
         self.exp = 0
+
+        self.calculate_exp = exp_map[self.config['misc']['growth_rate']]
+        self.exp_to_level_up = self.calculate_exp(self.level)
+        if self.exp_to_level_up == 0:
+            self.process_exp()
+        print(self.exp_to_level_up)
 
         self.nature, self.nature_stat = random.choice(list(config['pokemon_constants']['natures'].items()))
         self.load_stats()
@@ -42,6 +68,14 @@ class Pokemon(Element):
 
         # healthbar ----------- #
         self.healthbar = Healthbar(self)
+
+    def process_exp(self):
+        while self.exp >= self.exp_to_level_up:
+            print('exp         ', self.exp)
+            print('exp to level', self.exp_to_level_up)
+            self.exp -= self.exp_to_level_up
+            self.level += 1
+            self.exp_to_level_up = self.calculate_exp(self.level)
 
     def load_stats(self):
         c = self.config['base_stats']
@@ -104,13 +138,17 @@ class Pokemon(Element):
         self.active_moves[index].use(target)
     
     def die(self):
-        pass
+        if self.owner.type == 'rival':
+            exp_amt = (self.config['base_exp'] * self.level) / 7    # generic exp calculation
+            self.e['World'].player.active_pokemon.gain_exp(exp_amt)
+        self.alive = False
 
     def damage(self, amt):
         self.damage_taken = amt
 
     def gain_exp(self, amt):
         self.exp += amt
+        self.process_exp()
 
     def update(self):
         self.healthbar.update()
@@ -133,6 +171,9 @@ class Pokemon(Element):
                 alive = afflicion.update()
                 if not alive:
                     self.afflictions.pop(i)
+
+        if self.e['Input'].mouse_state['right_click']:
+            self.gain_exp(1)
 
     def render(self, surf, pos, direction='back'):
         surf.blit(self.assets[direction], (pos[0], pos[1] + 40))
