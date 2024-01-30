@@ -51,7 +51,7 @@ class Healthbar(Element):
         if self.exp_bar:
             exp_ratio = self.owner.exp / self.owner.exp_to_level_up
             exp_bar_width = self.assets['exp_bar'].get_width() * exp_ratio
-            self.exp_bar = pygame.transform.scale(self.exp_bar, (exp_bar_width, self.exp_bar.get_height()))
+            #self.exp_bar = pygame.transform.scale(self.exp_bar, (exp_bar_width, self.exp_bar.get_height()))
 
     def render(self, surf):
         if self.player.type == 'player':

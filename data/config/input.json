@@ -23,5 +23,30 @@
         "toggle": "press",
         "button": ["keyboard", [1073741892]],
         "mode": ["core"]
+    },
+    "left_battle": {
+        "toggle": "press",
+        "button": ["keyboard", [97]],
+        "mode": ["battle"]
+    },
+    "right_battle": {
+        "toggle": "press",
+        "button": ["keyboard", [100]],
+        "mode": ["battle"]
+    },
+    "up_battle": {
+        "toggle": "press",
+        "button": ["keyboard", [119]],
+        "mode": ["battle"]
+    },
+    "down_battle": {
+        "toggle": "press",
+        "button": ["keyboard", [115]],
+        "mode": ["battle"]
+    },
+    "select_move": {
+        "toggle": "press",
+        "button": ["keyboard", [32]],
+        "mode": ["battle"]
     }
 }

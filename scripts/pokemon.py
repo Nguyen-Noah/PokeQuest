@@ -134,8 +134,8 @@ class Pokemon(Element):
     def calculate_health(self):
         return ((2 * self.hp_dict['base'] + self.hp_dict['iv'] + (self.hp_dict['ev'] / 4)) * self.level) / 100 + self.level + 10
 
-    def use_move(self, index, target):
-        self.active_moves[index].use(target)
+    def use_move(self, index):
+        self.active_moves[index].use()
     
     def die(self):
         if self.owner.type == 'rival':

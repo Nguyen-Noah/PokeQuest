@@ -16,6 +16,21 @@ class Pokedex(Element):
     def __str__(self):
         return ' '.join(pokemon for pokemon in self.owned_pokemon)
     
+    def get_highest_atk(self):
+        highest_atk = self.team_pokemon[0]
+        for pokemon in self.team_pokemon:
+            if pokemon.attack > highest_atk.attack:
+                highest_atk = pokemon
+        return highest_atk
+    
+    def get_highest_def(self):
+        highest_def = self.team_pokemon[0]
+        for pokemon in self.team_pokemon:
+            if pokemon.defense > highest_def:
+                highest_def = pokemon
+
+        return highest_def
+    
     def add(self, pokemon):
         if pokemon not in self.owned_pokemon:
             new_pkm = Pokemon(pokemon, self.owner)

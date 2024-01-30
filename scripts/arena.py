@@ -17,9 +17,11 @@ class Arena(ElementSingleton):
             'rival': []
         }
 
+        self.e['Input'].set_input_mode('battle')
+
         # audio
         self.e['Audio'].load('battle_theme.wav', 1.0)
-        self.e['Audio'].play('battle_theme')
+        #self.e['Audio'].play('battle_theme')
 
         # font
         self.textbox = Textbox('hg')
@@ -44,6 +46,7 @@ class Arena(ElementSingleton):
     def update(self):
         self.e['World'].player.update()
         self.rival.update()
+        self.textbox.update()
 
         if self.transition >= 0:
             self.transition -= 1

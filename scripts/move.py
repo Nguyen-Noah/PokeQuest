@@ -7,6 +7,7 @@ class Move(Element):
         super().__init__()
         self.name = move
         self.owner = owner
+        self.trainer = self.owner.owner
         self.config = config['moves'][self.name]
         self.load()
 
@@ -17,7 +18,7 @@ class Move(Element):
         self.power = self.config['power']
         self.pp = self.config['pp']
         self.priority = self.config['priority']
-        self.target = self.config['target']
+        self.target_type = self.config['target']
         self.type = self.config['type']
 
         self.stat_changes = self.config['stat_changes']
@@ -36,7 +37,14 @@ class Move(Element):
         self.min_turns = m['min_turns']
         self.stat_chance = m['stat_chance']
 
-    def use(self, target):
+    def set_target(self):
+        if self.target_type in ['selected-pokemon', 'selected-pokemon-me-first']:
+            self.target = self.e['World'].player.active_pokemon if self.trainer.type == 'rival' else self.e['Arena'].rival.active_pokemon
+
+        else:
+            self.target = self.config['target']
+
+    def use(self):
         """
         possible targets:
 
@@ -50,18 +58,20 @@ class Move(Element):
         entire-field
         """
 
+        self.set_target()
+
         # generic damage calculation
         # Damage = (((2 * Level / 5 + 2) * Power * [Attack/Defense]) / 50 + 2) * Modifier
         # Modifier = targets * weather * badge * critical * random * STAB * type * burn * other
 
-        if self.damage_class in ['selected-pokemon', 'selected-pokemon-me-first']:
+        if self.target_type in ['selected-pokemon', 'selected-pokemon-me-first']:
             if self.damage_class == 'physical':
-                var = self.owner.attack / target.defense
+                var = self.owner.attack / self.target.defense
             elif self.damage_class == 'special':
-                var = self.owner.special_attack / target.special_defense
+                var = self.owner.special_attack / self.target.special_defense
 
             damage = (((2 * self.owner.level / 5 + 2) * self.power * var) / 50 + 2)
-            target.damage(damage)
+            self.target.damage(damage)
         
         elif self.damage_class == 'all-pokemon':
             pass

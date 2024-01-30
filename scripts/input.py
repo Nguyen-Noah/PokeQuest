@@ -43,6 +43,9 @@ class Input(ElementSingleton):
         for binding in self.mouse_state:
             self.mouse_state[binding] = False
 
+    def set_input_mode(self, input_mode):
+        self.input_mode = input_mode
+
     def update(self):
         self.mouse_pos = pygame.mouse.get_pos()
 
