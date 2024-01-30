@@ -1,4 +1,4 @@
-from base_affliction import BaseAffliction
+from .base_affliction import BaseAffliction
 
 class Paralysis(BaseAffliction):
     def __init__(self):

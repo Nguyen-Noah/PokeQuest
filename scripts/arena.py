@@ -12,6 +12,10 @@ class Arena(ElementSingleton):
         self.state = 'opening'
         self.click_timer = 50
         self.current_textbox = self.e['Assets'].text_boxes['hg']
+        self.field_effects = {
+            'player': [],
+            'rival': []
+        }
 
         # audio
         self.e['Audio'].load('battle_theme.wav', 1.0)

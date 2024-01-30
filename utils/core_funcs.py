@@ -23,3 +23,6 @@ def filter_asset(asset_list, female, shiny):
     back.join('_female' if female else '')
 
     return {'front': asset_list[front], 'back': asset_list[back]}
+
+def itr(l):
+    return sorted(enumerate(l), reverse=True)

@@ -35,3 +35,36 @@ class Move(Element):
         self.max_turns = m['max_turns']
         self.min_turns = m['min_turns']
         self.stat_chance = m['stat_chance']
+
+    def use(self, target):
+        """
+        possible targets:
+
+        user
+        selected-pokemon
+        selected-pokmon-me-first
+        all-pokemon
+        specific-move
+        users-field
+        opponents-field
+        entire-field
+        """
+
+        # generic damage calculation
+        # Damage = (((2 * Level / 5 + 2) * Power * [Attack/Defense]) / 50 + 2) * Modifier
+        # Modifier = targets * weather * badge * critical * random * STAB * type * burn * other
+
+        if self.damage_class in ['selected-pokemon', 'selected-pokemon-me-first']:
+            if self.damage_class == 'physical':
+                var = self.owner.attack / target.defense
+            elif self.damage_class == 'special':
+                var = self.owner.special_attack / target.special_defense
+
+            damage = (((2 * self.owner.level / 5 + 2) * self.power * var) / 50 + 2)
+            target.damage(damage)
+        
+        elif self.damage_class == 'all-pokemon':
+            pass
+
+        elif self.damage_class in ['users-field', 'opponents-field', 'entire-field']:
+            pass

@@ -1,12 +1,12 @@
-from burn import Burn
-from confusion import Confusion
-from curse import Curse
-from freeze import Freeze
-from infatuation import Infatuation
-from nightmare import Nightmare
-from paralysis import Paralysis
-from poison import Poison
-from sleep import Sleep
+from .burn import Burn
+from .confusion import Confusion
+from .curse import Curse
+from .freeze import Freeze
+from .infatuation import Infatuation
+from .nightmare import Nightmare
+from .paralysis import Paralysis
+from .poison import Poison
+from .sleep import Sleep
 
 primary_status = {
     'burn': Burn,
@@ -21,3 +21,27 @@ secondary_status = {
     'infatuation': Infatuation,
     'curse': Curse
 }
+
+
+"""
+none
+paralysis
+leech-seed
+poison
+confusion
+infatuation
+ingrain
+sleep
+burn
+no-type-immunity
+freeze
+trap
+unknown
+disable
+torment
+perish-song
+yawn
+nightmare
+embargo
+heal-block
+"""

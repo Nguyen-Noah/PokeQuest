@@ -10,6 +10,7 @@ class Textbox(ElementSingleton):
         self.text_counter = 0
         self.assets = self.e['Assets'].text_boxes
         self.current_textbox = self.assets[self.type]
+        self.selected_option = 0            # 0, 1, 2, 3
 
         # getting the trainers for simplicity
         self.player = self.e['World'].player

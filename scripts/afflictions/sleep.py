@@ -1,4 +1,4 @@
-from base_affliction import BaseAffliction
+from .base_affliction import BaseAffliction
 
 class Sleep(BaseAffliction):
     def __init__(self):

@@ -3,7 +3,7 @@ from .trainer import Trainer
 
 class Player(Trainer):
     def __init__(self, pos):
-        super().__init__('player')
+        super().__init__('player', 'player')
         self.pos = pos
         self.money = 0
         self.state = 'fighting'
@@ -33,7 +33,7 @@ class Player(Trainer):
                         self.e['Arena'].textbox.reset_text_counter()
                         self.e['Arena'].set_state('choose_action')
 
-        print(self.active_pokemon.__repr__())
+        #print(self.active_pokemon.__repr__())
 
     def render(self, surf):
         if self.state == 'fighting':

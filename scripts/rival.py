@@ -1,9 +1,10 @@
 import pygame, random
 from .trainer import Trainer
+from .trainer_ai import TrainerAI
 
 class Rival(Trainer):
     def __init__(self, name):
-        super().__init__('rival')
+        super().__init__('rival', TrainerAI)
         self.name = name
         self.num_pokemon = random.randint(1, 6)
         self.add_pokemon('umbreon')

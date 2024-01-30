@@ -8,23 +8,52 @@ class Healthbar(Element):
         self.health = self.owner.current_hp
         self.player = self.owner.owner
         self.assets = self.e['Assets'].health_bars
+        self.name_font = pygame.font.Font('data/fonts/pokemon-ds-font.ttf', 45)
         if self.player.type == 'player':
             self.transition_offset = self.assets[self.player.type + '_main'].get_width()
         else:
             self.transition_offset = -self.assets[self.player.type + '_main'].get_width()
-        self.name_font = pygame.font.Font('data/fonts/pokemon-ds-font.ttf', 45)
+
+        hp_percent = self.owner.current_hp / self.owner.max_hp
+        if hp_percent > 0.5:
+            self.healthbar = self.assets['green_health']
+        elif hp_percent > 0.2 and hp_percent < 0.5:
+            self.healthbar = self.assets['yellow_health']
+        else:
+            self.healthbar = self.assets['red_health']
+
+    def render_name(self, surf, pos):
+        text_surf = self.name_font.render(self.owner.name.capitalize(), True, (80, 80, 80))
+        shadow_surf = self.name_font.render(self.owner.name.capitalize(), True, (200, 200, 200))
+        surf.blit(shadow_surf, (pos[0] + 2, pos[1]))
+        surf.blit(shadow_surf, (pos[0] + 2, pos[1] + 2))
+        surf.blit(shadow_surf, (pos[0], pos[1] + 2))
+        surf.blit(text_surf, pos)
 
     def update(self):
-        pass
+        health_ratio = self.owner.current_hp / self.owner.max_hp
+
+        if health_ratio < 0.5 and health_ratio > 0.2:
+            self.healthbar = self.assets['yellow_health']
+        if health_ratio < 0.2:
+            self.healthbar = self.assets['red_health']
+
+        if health_ratio > 0:
+            healthbar_width = self.assets['green_health'].get_width() * health_ratio        # use width from assets b/c full healthbar width is needed
+            self.healthbar = pygame.transform.scale(self.healthbar, (healthbar_width, self.healthbar.get_height()))
+        else:
+            self.healthbar = pygame.transform.scale(self.healthbar, (0, self.healthbar.get_height()))
 
     def render(self, surf):
         if self.player.type == 'player':
             name_offset = (60, 25)
+            health_pos = (600, 355)
             render_pos = (surf.get_width() - self.assets[self.player.type + '_main'].get_width(), 280)
             if self.transition_offset > 0:
                 self.transition_offset -= min(12, self.transition_offset)
         else:
             name_offset = (10, 25)
+            health_pos = (150, 122)
             render_pos = (0, 50)
             if self.transition_offset <= 0:
                 self.transition_offset += min(12, abs(self.transition_offset))
@@ -32,10 +61,6 @@ class Healthbar(Element):
         render_pos = (render_pos[0] + self.transition_offset, render_pos[1])
         surf.blit(self.assets[self.player.type + '_main'], render_pos)
 
-        text_surf = self.name_font.render(self.owner.name.capitalize(), True, (80, 80, 80))
-        shadow_surf = self.name_font.render(self.owner.name.capitalize(), True, (200, 200, 200))
-        surf.blit(shadow_surf, (render_pos[0] + name_offset[0] + 2, render_pos[1] + name_offset[1]))
-        surf.blit(shadow_surf, (render_pos[0] + name_offset[0] + 2, render_pos[1] + name_offset[1] + 2))
-        surf.blit(shadow_surf, (render_pos[0] + name_offset[0], render_pos[1] + name_offset[1] + 2))
-        surf.blit(text_surf, (render_pos[0] + name_offset[0], render_pos[1] + name_offset[1]))
- 
+        surf.blit(self.healthbar, (health_pos[0] + self.transition_offset, health_pos[1]))
+
+        self.render_name(surf, (render_pos[0] + name_offset[0], render_pos[1] + name_offset[1]))

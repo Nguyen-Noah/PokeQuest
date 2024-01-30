@@ -3,11 +3,15 @@ from utils.elements import Element
 from .pokedex import Pokedex
 
 class Trainer(Element):
-    def __init__(self, type):
+    def __init__(self, type, controller):
         super().__init__()
         self.type = type
         self.pokedex = Pokedex(self)
         self.render_pokemon = False
+
+        self.controller = controller
+        if self.controller not in ['player', None]:
+            self.controller = controller(self)
 
     @property
     def active_pokemon(self):
@@ -18,6 +22,9 @@ class Trainer(Element):
 
     def update(self):
         self.pokedex.update()
+
+        if self.controller not in ['player', None]:
+            self.controller.update()
 
     def render(self, surf):
         pass
