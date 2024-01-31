@@ -19,7 +19,7 @@ class Textbox(ElementSingleton):
         self.move_options = [(0, 0), (self.assets[self.type + '_moves'].get_width() // 2, 0), (0, self.assets[self.type + '_moves'].get_height() // 2), (self.assets[self.type + '_moves'].get_width() // 2, self.assets[self.type + '_moves'].get_height() // 2)]
         self.selected_move = 0
 
-    def render_text(self, surf, text):
+    def _render_text(self, surf, text):
         text_surf = self.font.render(text[:math.floor(self.text_counter)], True, (80, 80, 80))
         shadow_text = self.font.render(text[:math.floor(self.text_counter)], True, (200, 200, 200))
         self.text_counter += 0.5
@@ -46,7 +46,8 @@ class Textbox(ElementSingleton):
                     self.selected_move -= 2
 
             if self.e['Input'].states['select_move']:
-                self.player.active_pokemon.use_move(self.selected_move)
+                self.e['Arena'].set_state('first_action')
+                self.reset_text_counter()
 
     def render(self, surf):
         pygame.draw.rect(surf, (0, 0, 0), (0, self.e['Arena'].assets['bg'].get_height(), self.e['Arena'].assets['bg'].get_width(), surf.get_height() - self.e['Arena'].assets['bg'].get_height()))
@@ -54,15 +55,28 @@ class Textbox(ElementSingleton):
         surf.blit(self.current_textbox, render_pos)
 
         if self.e['Arena'].state == 'prebattle':
-            self.render_text(surf, f'You are challenged by trainer {self.rival.name.upper()}!')
+            self._render_text(surf, f'You are challenged by trainer {self.rival.name.upper()}!')
+
         elif self.e['Arena'].state == 'rival_deploying':
-            self.render_text(surf, f'{self.rival.name.capitalize()} sent out {self.rival.active_pokemon.name.upper()}!')
+            self._render_text(surf, f'{self.rival.name.capitalize()} sent out {self.rival.active_pokemon.name.upper()}!')
+
         elif self.e['Arena'].state == 'deploying':
-            self.render_text(surf, f'Go! {self.player.active_pokemon.name.upper()}!')
+            self._render_text(surf, f'Go! {self.player.active_pokemon.name.upper()}!')
+
         elif self.e['Arena'].state == 'choose_action':
-            self.render_text(surf, f'What will {self.player.active_pokemon.name.upper()} do?')
+            self._render_text(surf, f'What will {self.player.active_pokemon.name.upper()} do?')
             self.current_textbox = self.assets[self.type + '_moves']
             surf.blit(self.assets['fight'], (self.current_textbox.get_width(), render_pos[1]))
+
         elif self.e['Arena'].state == 'choose_move':
-            for i, pos in enumerate(self.move_options):
+            for i in range(len(self.player.active_pokemon.active_moves)):
+                pos = self.move_options[i]
                 pygame.draw.rect(surf, (0, 255, 0) if self.selected_move == i else (255, 0, 0), (pos[0], pos[1] + self.e['Arena'].assets['bg'].get_height(), self.current_textbox.get_width() // 2, self.current_textbox.get_height() // 2), 4)
+        
+        elif self.e['Arena'].state == 'first_action':
+            first = self.e['Arena'].attack_order[0]
+            self._render_text(surf, f'{first.name.capitalize()} used {first.active_moves[self.selected_move].name.upper()}!')
+
+        elif self.e['Arena'].state == 'last_action':
+            last = self.e['Arena'].attack_order[1]
+            self._render_text(surf, f'{last.name.capitalize()} used {last.active_moves[0].name.upper()}!')                   # CHANGE WITH AI

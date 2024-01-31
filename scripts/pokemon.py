@@ -33,10 +33,12 @@ class Pokemon(Element):
         self.config = load_config(self.name)
         self.damage_taken = 0
         self.afflictions = []
+        self.attacked = False
         self.alive = True
-        self.load()
+        self._load()
+        self.blink_timer = 7
   
-    def load(self):
+    def _load(self):
         # female/shiny -------- #
         self.female = self.config['misc']['gender_rate'] > random.randint(0, 8)
         self.shiny = random.randint(1, 8192) == 1
@@ -48,36 +50,41 @@ class Pokemon(Element):
         self.calculate_exp = exp_map[self.config['misc']['growth_rate']]
         self.exp_to_level_up = self.calculate_exp(self.level)
         if self.exp_to_level_up == 0:
-            self.process_exp()
-        print(self.exp_to_level_up)
+            self._process_exp()
 
         self.nature, self.nature_stat = random.choice(list(config['pokemon_constants']['natures'].items()))
-        self.load_stats()
+        self._load_stats()
+
+        self._boosts = {
+            'accuracy': 0,
+            'attack': 0,
+            'defense': 0,
+            'evasion': 0,
+            'special_attack': 0,
+            'special_defense': 0,
+            'speed': 0
+        }
 
         # moves --------------- #
         self.active_moves = []
-        print(self.owner.type, '------------')
         for move in self.config['moves']:
             for learn_method in self.config['moves'][move]:                                         # this loop runs at most 4 times, rarely more than once
                 if learn_method['learn_method'] == 'level-up' and learn_method['level_learned'] == 1:
                     self.active_moves.append(Move(move, self))
-                    print(move)
 
         # assets -------------- #
-        self.assets = filter_asset(self.e['Assets'].pokemon[self.name], self.female, self.shiny)
+        self.img = filter_asset(self.e['Assets'].pokemon[self.name], self.config['misc']['has_gender_differences'], self.shiny, 'back' if self.owner.type == 'player' else 'front')
 
         # healthbar ----------- #
         self.healthbar = Healthbar(self)
 
-    def process_exp(self):
+    def _process_exp(self):
         while self.exp >= self.exp_to_level_up:
-            print('exp         ', self.exp)
-            print('exp to level', self.exp_to_level_up)
             self.exp -= self.exp_to_level_up
             self.level += 1
             self.exp_to_level_up = self.calculate_exp(self.level)
 
-    def load_stats(self):
+    def _load_stats(self):
         c = self.config['base_stats']
         up, down = self.nature_stat
         self.hp_dict = {
@@ -116,10 +123,10 @@ class Pokemon(Element):
             'iv': random.randint(0, 31),
             'nature': 1.1 if up == 'speed' else 0.9 if down == 'speed' else 1.0
         }
-        self.calculate_stats()
+        self._calculate_stats()
         self.current_hp = self.max_hp
 
-    def calculate_stats(self):
+    def _calculate_stats(self):
         # use after fights to reset all of the stats
         self.max_hp = self.calculate_health()
         self.attack = self.calculate_stat(self.atk_dict)
@@ -134,10 +141,43 @@ class Pokemon(Element):
     def calculate_health(self):
         return ((2 * self.hp_dict['base'] + self.hp_dict['iv'] + (self.hp_dict['ev'] / 4)) * self.level) / 100 + self.level + 10
 
+    @property
+    def boosts(self):
+        return self._boosts
+
+    def boost(self, stat, amt):
+        self._boosts[stat] += amt
+        if self._boosts[stat] > 6:
+            self._boosts[stat] = 6
+        elif self._boosts[stat] < -6:
+            self._boosts[stat] = 6
+
+    def clear_boosts(self):
+        for stat in self._boosts:
+            self._boosts[stat] = 0
+
+    def clear_negative_boosts(self):
+        for stat in self._boosts:
+            if self._boosts[stat] < 0:
+                self._boosts[stat] = 0
+
+    def clear_positive_boosts(self):
+        for stat in self._boosts:
+            if self._boosts[stat] > 0:
+                self._boosts[stat] = 0
+
+    def invert_boosts(self):
+        self._boosts = {k: -v for k, v in self._boosts.items()}
+
     def use_move(self, index):
+        print(self.name, self.active_moves[index].name)
         self.active_moves[index].use()
+        self.attacked = True
+
+    def reset_battle_loop(self):
+        self.attacked = False
     
-    def die(self):
+    def _die(self):
         if self.owner.type == 'rival':
             exp_amt = (self.config['base_exp'] * self.level) / 7    # generic exp calculation
             self.e['World'].player.active_pokemon.gain_exp(exp_amt)
@@ -148,24 +188,37 @@ class Pokemon(Element):
 
     def gain_exp(self, amt):
         self.exp += amt
-        self.process_exp()
+        self._process_exp()
 
     def update(self):
         self.healthbar.update()
 
-        self.calculate_stats()
+        self._calculate_stats()
 
         # used to tick down health instead of just subtracting it all at once
         tick_damage = 0.1
         if self.damage_taken > 0:
+            # storing the health in a temporary variable to make sure it is non-negative
             self.damage_taken -= tick_damage
             temp_health = self.current_hp
             temp_health -= tick_damage
             self.current_hp = max(0, temp_health)
 
-            if self.current_hp == 0:
-                self.die()
+            # blinking animation when hit
+            if self.blink_timer > 0:
+                self.img.set_alpha(255)
+            elif self.blink_timer <= 0 and self.blink_timer > -7:
+                self.img.set_alpha(0)
+            else:
+                self.blink_timer = 10
+            self.blink_timer -= 1
 
+            if self.current_hp == 0:
+                self._die()
+        else:
+            self.img.set_alpha(255)
+
+        # updating afflictions if there are any
         if self.afflictions:
             for i, afflicion in itr(self.afflictions):
                 alive = afflicion.update()
@@ -175,8 +228,8 @@ class Pokemon(Element):
         if self.e['Input'].mouse_state['right_click']:
             self.gain_exp(1)
 
-    def render(self, surf, pos, direction='back'):
-        surf.blit(self.assets[direction], (pos[0], pos[1] + 40))
+    def render(self, surf, pos):
+        surf.blit(self.img, (pos[0], pos[1] + 40))
         self.healthbar.render(surf)
 
     def __repr__(self):

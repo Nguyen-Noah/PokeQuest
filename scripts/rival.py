@@ -39,4 +39,4 @@ class Rival(Trainer):
                 surf.blit(pokeball_surf, (render_pos[0] + 100, render_pos[1] + 180))
 
         if self.render_pokemon:
-            self.active_pokemon.render(surf, render_pos, 'front')
+            self.active_pokemon.render(surf, render_pos)

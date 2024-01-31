@@ -65,13 +65,16 @@ class Move(Element):
         # Modifier = targets * weather * badge * critical * random * STAB * type * burn * other
 
         if self.target_type in ['selected-pokemon', 'selected-pokemon-me-first']:
-            if self.damage_class == 'physical':
-                var = self.owner.attack / self.target.defense
-            elif self.damage_class == 'special':
-                var = self.owner.special_attack / self.target.special_defense
+            if self.damage_class != 'status':
+                if self.damage_class == 'physical':
+                    var = self.owner.attack / self.target.defense
+                elif self.damage_class == 'special':
+                    var = self.owner.special_attack / self.target.special_defense
 
-            damage = (((2 * self.owner.level / 5 + 2) * self.power * var) / 50 + 2)
-            self.target.damage(damage)
+                damage = (((2 * self.owner.level / 5 + 2) * self.power * var) / 50 + 2)
+                self.target.damage(damage)
+            else:
+                pass
         
         elif self.damage_class == 'all-pokemon':
             pass
