@@ -5,6 +5,7 @@ from .move import Move
 from .healthbar import Healthbar
 from .config import config
 from .afflictions import affliction_map
+from .pokemon_type import PokemonType
 
 def slow(level):
     return 5 * level ** 3 // 4
@@ -73,6 +74,13 @@ class Pokemon(Element):
             for learn_method in self.config['moves'][move]:                                         # this loop runs at most 4 times, rarely more than once
                 if learn_method['learn_method'] == 'level-up' and learn_method['level_learned'] == 1:
                     self.active_moves.append(Move(move, self))
+
+        # types --------------- #
+        self._type1 = PokemonType.from_name(self.config['type'][0]['name'])
+        if len(self.config['type']) == 1:
+            self._type2 = None
+        else:
+            self.type2 = PokemonType.from_name(self.config['type'][1]['name'])
 
         # assets -------------- #
         self.img = filter_asset(self.e['Assets'].pokemon[self.name], self.config['misc']['has_gender_differences'], self.shiny, 'back' if self.owner.type == 'player' else 'front')
@@ -167,6 +175,9 @@ class Pokemon(Element):
     def invert_boosts(self):
         self._boosts = {k: -v for k, v in self._boosts.items()}
 
+    def damage_multiplier(self, t):
+        return t.damage_multiplier(self._type1, self._type2)
+
     def get_moves(self):
         return self.active_moves
 
@@ -245,3 +256,7 @@ class Pokemon(Element):
     @property
     def boosts(self):
         return self._boosts
+    
+    @property
+    def types(self):
+        return self._type1, self._type2

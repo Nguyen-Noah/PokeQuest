@@ -13,10 +13,13 @@ class Lottery(ElementSingleton):
         path = 'data/pokemon'
         self.base_pokemon_probabilities = {}
         for dir in os.listdir(path):
-            with open(path + '/' + dir + '/config.json', 'r') as f:
-                data = json.load(f)
-                if data['base_evolution']:
-                    self.base_pokemon_probabilities[dir] = data['misc']['rate']
+            try:
+                with open(path + '/' + dir + '/config.json', 'r') as f:
+                    data = json.load(f)
+                    if data['base_evolution']:
+                        self.base_pokemon_probabilities[dir] = data['misc']['rate']
+            except:
+                pass
 
     def pull(self):
         self.num_pulls += 1

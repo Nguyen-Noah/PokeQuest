@@ -32,13 +32,15 @@ class Assets(ElementSingleton):
     
     def load_dir(self, path, colorkey=None):
         image_dir = {}
-        for file in os.listdir(path):
-            if file.split('.')[-1] == 'png':
-                if colorkey:
-                    image_dir[file.split('.')[0]] = self.load_img(path + '/' + file, colorkey=colorkey)
-                else:
-                    image_dir[file.split('.')[0]] = self.load_img(path + '/' + file)
-        return image_dir
+        if os.path.exists(path):
+            for file in os.listdir(path):
+                if file.split('.')[-1] == 'png':
+                    if colorkey:
+                        image_dir[file.split('.')[0]] = self.load_img(path + '/' + file, colorkey=colorkey)
+                    else:
+                        image_dir[file.split('.')[0]] = self.load_img(path + '/' + file)
+            return image_dir
+        return None
 
     def load_img(self, path, colorkey=None):
         img = pygame.image.load(path).convert_alpha()

@@ -24,7 +24,7 @@ class Arena(ElementSingleton):
 
         # audio
         self.e['Audio'].load('battle_theme.wav', 1.0)
-        self.e['Audio'].play('battle_theme')
+        #self.e['Audio'].play('battle_theme')
 
         # font
         self.textbox = Textbox('hg')
