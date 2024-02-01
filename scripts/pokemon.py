@@ -34,9 +34,11 @@ class Pokemon(Element):
         self.damage_taken = 0
         self.afflictions = []
         self.attacked = False
-        self.alive = True
+        self.fainted = False
+        self.active = True      # change
         self._load()
         self.blink_timer = 7
+        self.current_hp_fraction = 0
   
     def _load(self):
         # female/shiny -------- #
@@ -141,10 +143,6 @@ class Pokemon(Element):
     def calculate_health(self):
         return ((2 * self.hp_dict['base'] + self.hp_dict['iv'] + (self.hp_dict['ev'] / 4)) * self.level) / 100 + self.level + 10
 
-    @property
-    def boosts(self):
-        return self._boosts
-
     def boost(self, stat, amt):
         self._boosts[stat] += amt
         if self._boosts[stat] > 6:
@@ -169,6 +167,9 @@ class Pokemon(Element):
     def invert_boosts(self):
         self._boosts = {k: -v for k, v in self._boosts.items()}
 
+    def get_moves(self):
+        return self.active_moves
+
     def use_move(self, index):
         print(self.name, self.active_moves[index].name)
         self.active_moves[index].use()
@@ -181,7 +182,7 @@ class Pokemon(Element):
         if self.owner.type == 'rival':
             exp_amt = (self.config['base_exp'] * self.level) / 7    # generic exp calculation
             self.e['World'].player.active_pokemon.gain_exp(exp_amt)
-        self.alive = False
+        self.fainted = True
 
     def damage(self, amt):
         self.damage_taken = amt
@@ -228,13 +229,19 @@ class Pokemon(Element):
         if self.e['Input'].mouse_state['right_click']:
             self.gain_exp(1)
 
+        self.current_hp_fraction = self.current_hp / self.max_hp
+
     def render(self, surf, pos):
         surf.blit(self.img, (pos[0], pos[1] + 40))
         self.healthbar.render(surf)
 
     def __repr__(self):
-        return f'hp: {self.current_hp}, atk: {self.attack}, def: {self.defense}, sp_atk: {self.special_attack}, sp_def: {self.special_defense}, speed: {self.speed}'
+        return self.name
     
     def __str__(self):
         gender = 'female' if self.female else 'male'
-        return f'{self.name}, {gender}, {self.shiny}'
+        return f'{self.name}, {gender}, {self.shiny} hp: {self.current_hp}, atk: {self.attack}, def: {self.defense}, sp_atk: {self.special_attack}, sp_def: {self.special_defense}, speed: {self.speed}'
+    
+    @property
+    def boosts(self):
+        return self._boosts

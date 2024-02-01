@@ -1,16 +1,21 @@
 import pygame, random
 from .trainer import Trainer
-from .trainer_ai import TrainerAI
+from .trainer_ai.simple_heuristics import SimpleHeuristicsPlayer
 
 class Rival(Trainer):
     def __init__(self, name):
-        super().__init__('rival', TrainerAI)
+        super().__init__('rival', SimpleHeuristicsPlayer)
         self.name = name
         self.num_pokemon = random.randint(1, 6)
         self.add_pokemon('umbreon')
         self.img = self.e['Assets'].trainers[self.name]
         self.deploy_offset = 0
         self.player_deploy_timer = 100
+        self.selected_move = None
+
+    def choose_move(self, arena):
+        self.selected_move = self.controller.choose_move(arena)
+        print(self.selected_move)
 
     def update(self):
         super().update()

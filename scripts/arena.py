@@ -17,6 +17,9 @@ class Arena(ElementSingleton):
         }
         self.attack_order = [self.e['World'].player.active_pokemon, self.rival.active_pokemon]
 
+        self._available_moves = []
+        self._available_switches = []
+
         self.e['Input'].set_input_mode('battle')
 
         # audio
@@ -44,9 +47,19 @@ class Arena(ElementSingleton):
         self.state = state
 
     def update(self):
+        self._available_moves = []
+        self._available_switches = []
+
         self.e['World'].player.update()
         self.rival.update()
         self.textbox.update()
+
+        if self.e['World'].player.active_pokemon is not None:
+            self._available_moves.extend(self.e['World'].player.active_pokemon.get_moves())
+
+        for pokemon in self.rival.team_pokemon:
+            if not pokemon.active and not pokemon.fainted:
+                self._available_switches.append(pokemon)
 
         if self._transition >= 0:
             self._transition -= 1
@@ -73,6 +86,9 @@ class Arena(ElementSingleton):
                 else:
                     self.attack_order = [self.rival.active_pokemon, self.e['World'].player.active_pokemon]
 
+        elif self.state == 'choose_move':
+            self.rival.choose_move(self)
+
         elif self.state == 'first_action':
             if self._action_timer > 0:
                 self._action_timer -= 1
@@ -93,7 +109,7 @@ class Arena(ElementSingleton):
                     self.state = 'end_loop'
 
                 if not self.attack_order[1].attacked:
-                    self.attack_order[1].use_move(0)                    # CHANGE WITH AI
+                    self.attack_order[1].use_move(self.rival.selected_move)                    # CHANGE WITH AI
 
         elif self.state == 'end_loop':
             self._action_timer = 80
@@ -118,3 +134,8 @@ class Arena(ElementSingleton):
 
             # text box
             self.textbox.render(surf)
+
+
+    @property
+    def available_moves(self):
+        return self._available_moves

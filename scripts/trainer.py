@@ -15,8 +15,16 @@ class Trainer(Element):
             self.controller = controller(self)
 
     @property
+    def team_pokemon(self):
+        return self.pokedex.team_pokemon
+
+    @property
     def active_pokemon(self):
         return self.pokedex.team_pokemon[0]
+    
+    @property
+    def available_switches(self):
+        return [m for m in self.team_pokemon if not m.active]
 
     def add_pokemon(self, pokemon):
         self.pokedex.add(pokemon)
