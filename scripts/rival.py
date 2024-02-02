@@ -15,7 +15,6 @@ class Rival(Trainer):
 
     def choose_move(self, arena):
         self.selected_move = self.controller.choose_move(arena)
-        print(self.selected_move)
 
     def update(self):
         super().update()

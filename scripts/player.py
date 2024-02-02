@@ -9,7 +9,7 @@ class Player(Trainer):
         self.state = 'fighting'
         self.assets = self.e['Assets'].player
         self.current_img = self.assets['arena_idle']
-        self.add_pokemon('aipom')
+        self.add_pokemon('clefairy')
 
         self.throw_timer = 0
         self.throw_offset = 0
@@ -33,6 +33,8 @@ class Player(Trainer):
                         self.e['Arena'].textbox.reset_text_counter()
                         self.e['Arena'].set_state('choose_action')
 
+            self.selected_move = self.active_pokemon.active_moves[self.e['Textbox'].selected_move]
+
         #print(self.active_pokemon.__repr__())
 
     def render(self, surf):
@@ -48,3 +50,7 @@ class Player(Trainer):
             if self.render_pokemon:
                 self.active_pokemon.render(surf, (render_pos[0] - 400 + self.throw_offset, self.e['Arena'].assets['bg'].get_height() - 260))
                 
+
+    @property
+    def name(self):
+        return self._name

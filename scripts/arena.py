@@ -24,7 +24,7 @@ class Arena(ElementSingleton):
 
         # audio
         self.e['Audio'].load('battle_theme.wav', 1.0)
-        #self.e['Audio'].play('battle_theme')
+        self.e['Audio'].play('battle_theme')
 
         # font
         self.textbox = Textbox('hg')
@@ -54,8 +54,8 @@ class Arena(ElementSingleton):
         self.rival.update()
         self.textbox.update()
 
-        if self.e['World'].player.active_pokemon is not None:
-            self._available_moves.extend(self.e['World'].player.active_pokemon.get_moves())
+        if self.rival is not None:
+            self._available_moves.extend(self.rival.active_pokemon.get_moves())
 
         for pokemon in self.rival.team_pokemon:
             if not pokemon.active and not pokemon.fainted:
@@ -82,34 +82,35 @@ class Arena(ElementSingleton):
 
                 # calculate who will move first
                 if self.e['World'].player.active_pokemon.speed > self.rival.active_pokemon.speed:
-                    self.attack_order = [self.e['World'].player.active_pokemon, self.rival.active_pokemon]
+                    self.attack_order = [self.e['World'].player, self.rival]
                 else:
-                    self.attack_order = [self.rival.active_pokemon, self.e['World'].player.active_pokemon]
+                    self.attack_order = [self.rival, self.e['World'].player]
 
         elif self.state == 'choose_move':
-            self.rival.choose_move(self)
+            if not self.rival.selected_move:
+                self.rival.choose_move(self)
 
         elif self.state == 'first_action':
             if self._action_timer > 0:
                 self._action_timer -= 1
             else:
-                if self.attack_order[1].damage_taken < 0:
+                if self.attack_order[1].active_pokemon.damage_taken < 0:
                     self.state = 'last_action'
                     self._action_timer = 80
                     self.textbox.reset_text_counter()
 
-                if not self.attack_order[0].attacked:
-                    self.attack_order[0].use_move(self.textbox.selected_move)
+                if not self.attack_order[0].active_pokemon.attacked:
+                    self.attack_order[0].use_move()
 
         elif self.state == 'last_action':
             if self._action_timer > 0:
                 self._action_timer -= 1
             else:
-                if self.attack_order[0].damage_taken < 0:
+                if self.attack_order[0].active_pokemon.damage_taken < 0:
                     self.state = 'end_loop'
 
-                if not self.attack_order[1].attacked:
-                    self.attack_order[1].use_move(self.rival.selected_move)                    # CHANGE WITH AI
+                if not self.attack_order[1].active_pokemon.attacked:
+                    self.attack_order[1].use_move()                    # CHANGE WITH AI
 
         elif self.state == 'end_loop':
             self._action_timer = 80

@@ -75,8 +75,8 @@ class Textbox(ElementSingleton):
         
         elif self.e['Arena'].state == 'first_action':
             first = self.e['Arena'].attack_order[0]
-            self._render_text(surf, f'{first.name.capitalize()} used {first.active_moves[self.selected_move].name.upper()}!')
+            self._render_text(surf, f'{first.name.capitalize()} used {first.active_pokemon.active_moves[self.selected_move].name.upper()}!')
 
         elif self.e['Arena'].state == 'last_action':
             last = self.e['Arena'].attack_order[1]
-            self._render_text(surf, f'{last.name.capitalize()} used {last.active_moves[0].name.upper()}!')                   # CHANGE WITH AI
+            self._render_text(surf, f'{last.name.capitalize()} used {last.active_pokemon.active_moves[0].name.upper()}!')                   # CHANGE WITH AI

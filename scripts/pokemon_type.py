@@ -24,7 +24,7 @@ class PokemonType(Enum):
     def __str__(self):
         return f'{self.name} (pokemon type) object'
     
-    def damage_multiplier(self, type_1, type_2):
+    def damage_multiplier(self, type_1, type_2=None):
         damage_multiplier = config['typechart'][type_1.name.lower()]['damageTaken'][self.name.lower().capitalize()]
         if type_2 is not None:
             return damage_multiplier * config['typechart'][type_2.name.lower()]['damageTaken'][self.name.lower().capitalize()]

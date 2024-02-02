@@ -76,11 +76,18 @@ class Pokemon(Element):
                     self.active_moves.append(Move(move, self))
 
         # types --------------- #
-        self._type1 = PokemonType.from_name(self.config['type'][0]['name'])
+        if self.config['type'][0]['name'] == 'fairy':                           # CHANGE THIS LATER
+            self._type1 = PokemonType.from_name('normal')
+        else:
+            self._type1 = PokemonType.from_name(self.config['type'][0]['name'])
+
         if len(self.config['type']) == 1:
             self._type2 = None
         else:
-            self.type2 = PokemonType.from_name(self.config['type'][1]['name'])
+            if self.config['type'][1]['name'] == 'fairy':
+                self._type2 = PokemonType.from_name('normal')
+            else:
+                self._type2 = PokemonType.from_name(self.config['type'][1]['name'])
 
         # assets -------------- #
         self.img = filter_asset(self.e['Assets'].pokemon[self.name], self.config['misc']['has_gender_differences'], self.shiny, 'back' if self.owner.type == 'player' else 'front')
@@ -176,14 +183,18 @@ class Pokemon(Element):
         self._boosts = {k: -v for k, v in self._boosts.items()}
 
     def damage_multiplier(self, t):
+        if isinstance(t, Move):
+            t = t.type
         return t.damage_multiplier(self._type1, self._type2)
 
     def get_moves(self):
         return self.active_moves
 
-    def use_move(self, index):
-        print(self.name, self.active_moves[index].name)
-        self.active_moves[index].use()
+    def use_move(self, move):
+        if isinstance(move, Move):
+            move.use()
+        else:
+            self.active_moves[move].use()
         self.attacked = True
 
     def reset_battle_loop(self):

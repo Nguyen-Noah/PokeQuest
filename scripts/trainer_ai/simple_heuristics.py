@@ -24,6 +24,8 @@ class SimpleHeuristicsPlayer(Element):
         score += mon.current_hp_fraction * self.HP_FRACTION_COEFICIENT
         score -= mon.current_hp_fraction * self.HP_FRACTION_COEFICIENT
 
+        return score
+
     def _should_switch_out(self):
         mon = self.parent.active_pokemon
         opponent = self.e['World'].player.active_pokemon
@@ -61,29 +63,34 @@ class SimpleHeuristicsPlayer(Element):
         special_ratio = self._stat_estimation(mon, 'special_attack') / self._stat_estimation(opponent, 'special_defense')
 
         if arena.available_moves and (not self._should_switch_out() or not arena.available_switches):
+            print('there are available moves and i shouldnt switch out')
             n_remaining_mons = len([m for m in self.parent.team_pokemon if m.fainted is False])
             n_opp_remaining_mons = len([m for m in self.e['World'].player.team_pokemon if m.fainted is False]) #6 - len([m for m in self.e['World'].player.team_pokemon if m.fainted is True])
-
-            print(n_opp_remaining_mons)
-
+            
             for move in arena.available_moves:
                 if (n_opp_remaining_mons >= 3):
-                    return self.create_order(move)
+                    return move
                 elif (n_remaining_mons >= 2):
-                    return self.create_order(move)
+                    return move
+                
+            print(self._estimate_matchup(mon, opponent))
                 
             if (mon.current_hp_fraction == 1 and self._estimate_matchup(mon, opponent) > 0):
+                print('my health is full and my advantage is >0')
                 for move in arena.available_moves:
                     if (move.boosts and sum(move.boosts.values()) >= 2 and move.target == 'user' and min([mon.boosts[s] for s, v in move.boosts.items() if v > 0]) < 6):
-                        return self.create_order(move)
+                        print('i have a buff move that either buffs me enough or lowers yours enough')
+                        return move
                     
             move = max(arena.available_moves, key=lambda m: m.base_power * (1.5 if m.type in mon.types else 1) * (physical_ratio if m.damage_class == 'physical' else special_ratio) * m.accuracy * m.expected_hits * opponent.damage_multiplier(m))
-            return self.create_order(move)
+            print('i am choosing the highest damage ability')
+            return move
         
         if arena.available_switches:
             switches = arena.available_switches
             return self.create_order(max(switches, key=lambda s: self._estimate_matchup(s, opponent)))
         
+        print('i am choosing a random move')
         return self.choose_random_move()
 
     def choose_random_move(self):
