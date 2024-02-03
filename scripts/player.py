@@ -9,7 +9,7 @@ class Player(Trainer):
         self.state = 'fighting'
         self.assets = self.e['Assets'].player
         self.current_img = self.assets['arena_idle']
-        self.add_pokemon('clefairy')
+        self.add_pokemon('umbreon')
 
         self.throw_timer = 0
         self.throw_offset = 0
@@ -48,7 +48,7 @@ class Player(Trainer):
                 surf.blit(self.current_img, (render_pos[0] - self.throw_offset, render_pos[1]))
 
             if self.render_pokemon:
-                self.active_pokemon.render(surf, (render_pos[0] - 400 + self.throw_offset, self.e['Arena'].assets['bg'].get_height() - 260))
+                self.active_pokemon.render(surf, (render_pos[0] - 400 + self.throw_offset, self.e['Arena'].assets['bg'].get_height() - 225))
                 
 
     @property

@@ -62,7 +62,6 @@ class Move(Element):
         opponents-field
         entire-field
         """
-
         self.set_target()
 
         # generic damage calculation
@@ -111,6 +110,6 @@ class Move(Element):
     @property
     def boosts(self):
         return self.stat_changes
-        
+
     def __repr__(self):
         return self.name

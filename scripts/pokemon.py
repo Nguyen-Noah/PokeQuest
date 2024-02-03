@@ -191,10 +191,8 @@ class Pokemon(Element):
         return self.active_moves
 
     def use_move(self, move):
-        if isinstance(move, Move):
-            move.use()
-        else:
-            self.active_moves[move].use()
+        print(self)
+        move.use()
         self.attacked = True
 
     def reset_battle_loop(self):

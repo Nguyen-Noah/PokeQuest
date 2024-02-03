@@ -7,7 +7,7 @@ class Rival(Trainer):
         super().__init__('rival', SimpleHeuristicsPlayer)
         self.name = name
         self.num_pokemon = random.randint(1, 6)
-        self.add_pokemon('umbreon')
+        self.add_pokemon('clefairy')
         self.img = self.e['Assets'].trainers[self.name]
         self.deploy_offset = 0
         self.player_deploy_timer = 100

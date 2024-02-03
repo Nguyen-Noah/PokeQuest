@@ -63,7 +63,7 @@ class SimpleHeuristicsPlayer(Element):
         special_ratio = self._stat_estimation(mon, 'special_attack') / self._stat_estimation(opponent, 'special_defense')
 
         if arena.available_moves and (not self._should_switch_out() or not arena.available_switches):
-            print('there are available moves and i shouldnt switch out')
+            print('there are available moves and i shouldnt/cant switch out')
             n_remaining_mons = len([m for m in self.parent.team_pokemon if m.fainted is False])
             n_opp_remaining_mons = len([m for m in self.e['World'].player.team_pokemon if m.fainted is False]) #6 - len([m for m in self.e['World'].player.team_pokemon if m.fainted is True])
             
@@ -72,13 +72,11 @@ class SimpleHeuristicsPlayer(Element):
                     return move
                 elif (n_remaining_mons >= 2):
                     return move
-                
-            print(self._estimate_matchup(mon, opponent))
-                
+
             if (mon.current_hp_fraction == 1 and self._estimate_matchup(mon, opponent) > 0):
                 print('my health is full and my advantage is >0')
                 for move in arena.available_moves:
-                    if (move.boosts and sum(move.boosts.values()) >= 2 and move.target == 'user' and min([mon.boosts[s] for s, v in move.boosts.items() if v > 0]) < 6):
+                    if (move.boosts and sum(move.boosts.values()) >= 2 and move.trainer.type == 'player' and min([mon.boosts[s] for s, v in move.boosts.items() if v > 0]) < 6):
                         print('i have a buff move that either buffs me enough or lowers yours enough')
                         return move
                     
