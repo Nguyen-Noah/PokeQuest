@@ -1,7 +1,10 @@
 import pygame, os, json
 
-def load_config(filename):
-    config_path = f'data/pokemon/{filename}/config.json'
+def load_config(filename, sprite_config=False):
+    if sprite_config:
+        config_path = f'data/pokemon/{filename}/sprites/sprite_config.json'
+    else:
+        config_path = f'data/pokemon/{filename}/config.json'
     with open(config_path, 'r') as file:
         config = json.load(file)
     

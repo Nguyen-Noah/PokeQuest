@@ -32,6 +32,7 @@ class Pokemon(Element):
         self.name = name
         self.owner = owner
         self.config = load_config(self.name)
+        self.sprite_config = load_config(self.name, sprite_config=True)
         self.damage_taken = 0
         self.afflictions = []
         self.attacked = False

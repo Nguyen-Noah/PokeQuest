@@ -19,7 +19,7 @@ for folder in os.listdir(folder_path):
                     break
 
             if offset:
-                config = {'alpha_offset': offset}
+                config = {'alpha_offset': h - offset}
                 f = open(f'{folder_path}/{folder}/sprites/sprite_config.json', 'w')
                 f.write(json.dumps(config))
                 f.close()
