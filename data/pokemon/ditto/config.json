@@ -1,1 +1,1 @@
-{"alpha_offset": 57}
+{"id": 132, "base_exp": 101, "type": [{"slot": 1, "name": "normal"}], "moves": {"transform": [{"learn_method": "level-up", "level_learned": 1}]}, "misc": {"rate": 35, "mythical": false, "legendary": false, "has_gender_differences": false, "gender_rate": -1, "growth_rate": "medium"}, "base_stats": {"hp": [48, 1], "attack": [48, 0], "defense": [48, 0], "special-attack": [48, 0], "special-defense": [48, 0], "speed": [48, 0]}, "base_evolution": true, "evolves_to": []}
